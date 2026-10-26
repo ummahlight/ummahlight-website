@@ -1,14 +1,20 @@
-const SYSTEM = `You are Chat with Islam, a careful, compassionate Islamic educational assistant for Worldwide Islamic Prayer Family Foundation. Answer respectfully, clearly, and with nuance. When possible cite Quran surah and ayah or reliably known hadith collections, but NEVER invent quotations, hadith numbers or references. Distinguish established teachings from scholarly disagreement and mention differences among recognized schools where relevant. Avoid sectarian attacks. For fatwas, divorce, abuse, financial rulings, mental health crises or complex personal circumstances, encourage consultation with a qualified local scholar or appropriate professional. Do not pretend to be the founder or promise confidentiality. Respond in the user's language when possible. No personalized medical diagnoses. In immediate danger encourage local emergency help. Be warm, useful and concise unless asked for depth.`;
-export default async (request) => {
-  if(request.method!== 'POST') return new Response(JSON.stringify({error:'Method not allowed'}),{status:405});
-  try {
-    const {messages}=await request.json();
-    if(!Array.isArray(messages)||messages.length>24||messages.some(m=>!['user','assistant'].includes(m.role)||typeof m.content!=='string'||m.content.length>4000)) return Response.json({error:'Invalid chat input'},{status:400});
-    const key=process.env.OPENAI_API_KEY;
-    if(!key) return Response.json({error:'AI chat is not configured yet. Add OPENAI_API_KEY to Netlify environment variables and redeploy.'},{status:503});
-    const upstream=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL||'gpt-4.1-mini',messages:[{role:'system',content:SYSTEM},...messages],max_tokens:1100,temperature:0.4})});
-    const data=await upstream.json();
-    if(!upstream.ok) return Response.json({error:'The assistant is temporarily unavailable. Please try again.'},{status:502});
-    return Response.json({reply:data.choices?.[0]?.message?.content||'Please try asking again.'});
-  } catch {return Response.json({error:'Unable to process your request.'},{status:500});}
-};
+// Secure Netlify serverless function. Set OPENAI_API_KEY in Netlify environment variables.
+const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
+const reply=(status,obj)=>new Response(JSON.stringify(obj),{status,headers});
+export default async function handler(request){
+  if(request.method!=='POST')return reply(405,{error:'Only POST requests are accepted.'});
+  let payload;try{payload=await request.json()}catch{return reply(400,{error:'Invalid JSON request.'})}
+  const question=typeof payload?.question==='string'?payload.question.trim():'';
+  if(!question||question.length>2000)return reply(400,{error:'Please enter a question of 1–2000 characters.'});
+  const key=Netlify.env.get('OPENAI_API_KEY');
+  if(!key)return reply(503,{error:'Ummah AI is not configured yet. The site administrator must set OPENAI_API_KEY in Netlify environment variables.'});
+  try{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:Netlify.env.get('OPENAI_MODEL')||'gpt-4o-mini',temperature:0.35,max_tokens:700,messages:[{role:'system',content:'You are Ummah AI, a respectful Islamic learning assistant for UmmahLight. Give clear, compassionate, accurate answers; distinguish Qur’an, authentic hadith, scholarly interpretation, and uncertainty. Never fabricate verse numbers or hadith references. When unsure, say so. For fatwas, marriage disputes, and other sensitive decisions, recommend consulting a qualified local scholar. Avoid sectarian hostility. Do not claim to be a mufti.'},{role:'user',content:question}]})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){console.error('AI upstream error',r.status,data?.error?.type||'unknown');return reply(502,{error:r.status===401?'AI provider authentication failed. Please check the Netlify API key.':r.status===429?'AI provider rate or billing limit reached. Please try again later.':'AI service temporarily unavailable. Please try again.'})}
+    const answer=data.choices?.[0]?.message?.content;
+    if(typeof answer!=='string'||!answer.trim())return reply(502,{error:'The AI service returned no answer.'});
+    return reply(200,{answer:answer.trim()});
+  }catch(e){console.error('AI connection error',e?.message);return reply(502,{error:'Could not reach the AI service. Please try again.'})}
+}
+export const config={path:'/.netlify/functions/chat'};

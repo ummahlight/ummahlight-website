@@ -1,22 +1,17 @@
-# UmmahLight Premium Edition
+# UmmahLight Compact — replacement website
 
-A responsive Islamic community website for Worldwide Islamic Prayer Family Foundation.
+A static HTML/CSS/JS website with a Netlify AI function. No npm build step is needed.
 
-## Deployment
-1. Back up your existing GitHub repository first. This package is a **replacement website**, not a patch to the old src.jsx React app.
-2. Upload the contents of this directory to the root of the GitHub repository (not the ZIP itself). Remove or archive old conflicting files. GitHub should contain `index.html`, `style.css`, `app.js`, `package.json`, `build.mjs`, `netlify.toml` and `netlify/functions/chat.mjs`.
-3. On Netlify, configure build command `npm run build`, publish directory `dist`, and functions directory `netlify/functions`. Trigger a new deploy.
-4. For Ummah AI, add `OPENAI_API_KEY` as a **Netlify environment variable**, not to GitHub or JavaScript. Set scope to Functions if prompted. An API key requires separate API billing. Optionally set `OPENAI_MODEL` to a model available to your API account. Redeploy.
-5. Check Qur'an, prayer times, calendar, TV and chat after deployment.
+## Deploy
+1. Back up your existing GitHub repository or create a new repository.
+2. Upload the **contents** of this folder (not the outer folder) to the root of the GitHub repository. Remove old root website files that are no longer used, especially old build scripts and old `package.json` if you are replacing the previous project completely.
+3. On Netlify connect the repository. Base directory: blank. Build command: blank. Publish directory: `.`. Functions directory: `netlify/functions`.
+4. Add environment variable `OPENAI_API_KEY` in Netlify project configuration (never in GitHub). Optionally `OPENAI_MODEL` (default `gpt-4o-mini`). Redeploy after adding environment variables. A funded API account may be required; ChatGPT subscriptions do not include API usage.
+5. Test Quran, transliteration, prayer times, and AI on the deployed site. API calls require an internet connection.
 
-## Feature status / limitations
-- Qur'an: 114-surah list and Arabic + English translations fetched on-page from AlQuran Cloud API. Not bundled for offline use; API uptime and edition licensing should be checked.
-- Hadith: six sample narrations with references. This is NOT a complete hadith database. Verify wording/references before public religious use.
-- Prayer times: calculated on-page through Aladhan's API based on city, country and chosen method; not mosque-verified. No browser location permission required.
-- Calendar: local Gregorian month navigator and current Hijri date from Aladhan; Hijri month grid is not implemented. Moon sightings may differ.
-- WPF TV: featured YouTube video embedded on page; channel navigation links are external by design. Latest-upload automation and live detection require a separate YouTube Data API integration. Confirm featured video ID and embedding permission.
-- AI: backend OpenAI Responses API proxy in Netlify Function. Needs OPENAI_API_KEY, paid API access and deployment. No AI claims to be a qualified scholar. For production, add abuse protection, rate limiting, logging policy, privacy notice and moderation.
-- Charity, counselling, scholarships and founder sections are currently informational placeholders; no forms, payments, applications or founder image are configured.
-
-## Security
-Never commit API keys or credentials. Public website content and user questions should not include sensitive personal information. For production consider a privacy policy and consent disclosures for third-party APIs.
+## Before making public
+- WPF TV currently links to a YouTube search, rather than displaying an unverified embedded video. Replace that link with the verified official channel URL and optionally add a verified video/playlist iframe.
+- Verify all religious text and source references with qualified reviewers.
+- Verify Hijri dates and prayer times with local mosque standards. Dates may differ by moon sighting.
+- Add verified foundation contact details and a genuine founder photograph, if desired.
+- Verify Netlify function works after deployment; local file previews cannot execute serverless functions.
