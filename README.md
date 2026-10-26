@@ -1,32 +1,33 @@
-# Worldwide Islamic Prayer Family Foundation
+# UmmahLight — Complete Redesign
 
-Premium responsive React website with Islamic learning assistant, counseling services, outreach, and contact form.
+This is the **full replacement website project**, not a partial patch. It retains the original Vite/React + Netlify Functions architecture.
 
-## Deploy on Netlify
+## What changed
+- A shorter homepage with 7 clickable directory cards.
+- Dedicated in-site pages: About, Islamic Library, Guidance & Counselling, Charity & Scholarships, Videos & Live, Founder, Contact.
+- Official Worldwide Prayer Family Foundation YouTube channel link.
+- Responsive navigation, accessibility improvements, readable typography and mobile layout.
+- Chat with Islam preserved through `netlify/functions/chat.mjs`.
 
-1. Unzip the project.
-2. In Netlify choose **Add new project → Deploy manually** only if uploading a built `dist` folder. For the included source project, use **Import an existing project** from a GitHub repository.
-3. Upload this source folder to a GitHub repository and connect the repository to Netlify. Netlify reads `netlify.toml` and runs `npm run build` with publish directory `dist`.
-4. In **Project configuration → Environment variables**, set `OPENAI_API_KEY` to your own OpenAI API key. The key is stored on Netlify's server, not in the browser. Optionally set `OPENAI_MODEL` to a supported chat-completions model.
-5. Trigger a new deploy after saving environment variables.
-6. Test **Chat with Islam**. OpenAI API use incurs separate usage charges.
+## Publish with GitHub and Netlify
+1. Back up your existing repository or download it first.
+2. Open your `ummahlight-website` GitHub repository and replace the old project files with **all files and folders from this package** (keep the directory structure).
+3. Commit changes to `main`. If Netlify is linked to this repository, it should rebuild automatically.
+4. Build command: `npm run build`; publish directory: `dist` (also configured in `netlify.toml`).
+5. In Netlify, set `OPENAI_API_KEY` as a **secret environment variable** if you want AI chat to work. Never put API keys in GitHub or `src.jsx`. Chat may incur API usage costs.
 
-## If you need drag-and-drop deployment
+## Details to finish before launch
+- Replace `public/ADD_FOUNDER_PHOTO_HERE.txt` with a real photo saved exactly as `public/founder.jpg`.
+- In `src.jsx`, edit the `CONFIG` object at the top to add a verified foundation email and social links. The contact form does not send until a verified email is added.
+- The supplied YouTube handle is `@worldwideprayerfamilyfoundatio` from the user's channel screenshot; confirm it opens the correct channel.
+- Quran, Hadith, prayer times and calendars link to external sources. The site does not itself host the complete Qur’an or compute prayer times.
+- Confirm that your Netlify deployment has no errors and test every page and mobile view before public promotion.
 
-On a computer with Node.js, run `npm install && npm run build`. Upload the resulting `dist` folder to Netlify Drop. Note: manual static deploys do not automatically include the `netlify/functions/chat.mjs` function, so **AI chat will not work** with a simple dist drag-and-drop. Use the Git-connected deployment method above for the complete site.
+## Local development
+```
+npm install
+npm run dev
+npm run build
+```
 
-## Personalize before public launch
-
-In `src.jsx`, update the `CONFIG` object at the top with verified phone, WhatsApp, email, and social links. Contact details were intentionally left blank rather than guessed. The contact form currently prepares an email only after an email address is set. For a full counseling booking system, integrate a booking service and secure form handling. Founder quotation is labeled as editorial copy rather than falsely attributed speech. Replace illustrative visual motifs with permission-cleared photographs if desired.
-
-## Safety and production
-
-The AI is educational and may make mistakes; it should not be treated as a qualified scholar, therapist, or emergency service. Review privacy, consent, abuse prevention, API cost limits and rate limiting before a public campaign. The starter serverless endpoint has input validation but no per-IP rate limit; add Netlify edge protections or equivalent before major traffic. Do not collect confidential counseling records through this demo. Add your privacy policy, terms, and verified contact channels before launch.
-
-
-## UmmahLight upgrades
-- Add your own founder photo at `public/founder.jpg` (replaceable at any time). No invented portrait is included.
-- Qur’an, prayer times, Hijri calendar, Hadith and du’a cards link to external services. These are not yet embedded offline libraries or an in-site Quran reader.
-- Scholarship and charitable support section is informational. No donations are accepted until verified payment details and safeguards are configured.
-- For Netlify, import this project from Git and build with `npm run build`, publish `dist`. Configure OPENAI_API_KEY to enable Chat with Islam.
-- Verify external links and translation licensing before promoting them as official scholarly endorsements.
+This is a full website source ZIP. Uploading only the ZIP to an existing static Netlify site is not sufficient; it must be built from the GitHub source using Netlify's Vite build process.
