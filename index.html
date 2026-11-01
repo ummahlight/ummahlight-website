@@ -15,6 +15,13 @@
 @media(max-width:600px){#quran .ayah{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px;padding:12px 9px}#quran .ayah .arabic{font-size:25px;line-height:1.85}#quran .ayah .meaning{font-size:13px;line-height:1.6}#quran .audio-player{top:56px}}
 
 #quran .playing-ayah{background:#eaf4e9;border-left:4px solid #0b7358;transition:background .2s}#quran .controls button{white-space:nowrap}
+
+/* Accessibility improvements: legible Qur'an translations and transliteration */
+#quran .ayah .meaning{font-size:clamp(17px,1.55vw,21px);font-weight:600;line-height:1.8;color:#152b25;letter-spacing:.005em;overflow-wrap:break-word}
+#quran .ayah .translit{font-size:clamp(15px,1.3vw,18px);font-weight:500;line-height:1.8;color:#355c50;background:#f2f7ee;padding:9px 12px;border-radius:8px}
+#quran .ayah .arabic{color:#112e26}
+#quran .ayah{border-bottom:1px solid #d7ded3}
+@media(max-width:600px){#quran .ayah .meaning{font-size:16px;line-height:1.7;font-weight:600}#quran .ayah .translit{font-size:15px;line-height:1.7;padding:8px}#quran .ayah .arabic{font-size:26px;line-height:1.9}}
 </style></head><body>
 <div class="topline"><div class="wrap"><span id="today">Welcome to UmmahLight</span><span>“And cooperate in righteousness and piety.” — Qur’an 5:2</span><strong>Faith · Knowledge · Worship · Community</strong></div></div>
 <header class="masthead"><div class="wrap"><a href="#home" class="logo"><span class="logo-mark">☪</span><span><strong>UmmahLight</strong><small>WORLDWIDE ISLAMIC PRAYER FAMILY FOUNDATION</small></span></a><button class="menu" id="menu" aria-label="Open navigation" aria-expanded="false">☰</button><nav class="nav" id="nav" aria-label="Main navigation"><button data-page="home" class="active">⌂ Home</button><button data-page="quran">Qur’an</button><button data-page="hadith">Hadith</button><button data-page="learn">Learn Islam</button><button data-page="dua">Du’a & Dhikr</button><button data-page="prayer">Prayer Times</button><button data-page="history">Seerah & History</button><button data-page="qa">Islamic Q&A</button><button data-page="wpf">WPF</button></nav></div></header>
