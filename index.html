@@ -57,7 +57,7 @@
 <div class="q-course-progress"><strong id="qCourseProgress">0 of 56 lessons completed</strong><div class="q-progress-track"><div id="qProgressFill"></div></div></div>
 <div class="q-course-layout"><nav id="qCourseNav" class="q-course-nav" aria-label="Qur’an academy lesson list"></nav><div class="q-course-main"><div id="qLessonContent" class="q-lesson-content" aria-live="polite"></div><div class="q-course-actions"><button type="button" class="btn" id="qPreviousLesson">← Previous</button><button type="button" class="btn dark" id="qCompleteLesson">Mark lesson complete ✓</button><button type="button" class="btn" id="qNextLesson">Next lesson →</button></div></div></div>
 <p class="reading-notes">Learning note: Written descriptions cannot fully teach Makharij or correct pronunciation. Listen carefully and seek feedback from a qualified Qur’an teacher.</p></div></div></section>
-<section id="hadith" class="view"><div class="wrap content"><span class="eyebrow" style="color:#98722b">PROPHETIC GUIDANCE</span><h1 class="section-title">Hadith Library</h1><p class="h-explain"><strong>UMMAHLIGHT INTERNAL READER · UPDATED VERSION</strong> — Book reading stays on this website. No external reading buttons.</p><p class="section-sub">Explore classical Hadith collections as books, with Arabic titles, source links, and a guided reading desk. All reading stays on UmmahLight. Seven major collections now offer in-page chapter reading from an online dataset; the other books are being added in stages. No reading link takes you away from UmmahLight.</p>
+<section id="hadith" class="view"><div class="wrap content"><span class="eyebrow" style="color:#98722b">PROPHETIC GUIDANCE</span><h1 class="section-title">Hadith Library</h1><p class="h-explain"><strong>UMMAHLIGHT INTERNAL READER · UPDATED VERSION</strong> — Book reading stays on this website. No external reading buttons.</p><p class="section-sub">Explore classical Hadith collections as books, with Arabic titles, source links, and a guided reading desk. All reading stays on UmmahLight. All sixteen listed collections now have in-page Arabic-English reading interfaces using the available datasets. Some source chapters are missing, and commentary is not yet independently reviewed. No reading button redirects to another site.</p>
 <input class="search" id="hadithSearch" placeholder="Find a Hadith book or topic…" aria-label="Search hadith books and topics">
 <div id="hadithBooks" class="h-books" aria-label="Hadith book collection"></div>
 <div id="hadithReader" class="panel h-reader" hidden><button class="btn" type="button" id="hadithBack">← All Hadith books</button><div id="hadithReaderBody"></div></div>
@@ -198,10 +198,61 @@ function hChapterRender(book){
  const nextChapter=hMake('button','btn','Next chapter →');nextChapter.type='button';nextChapter.disabled=hChapterCurrent>=hChapterLimits[book[2]];nextChapter.addEventListener('click',()=>hLoadChapter(book,hChapterCurrent+1));
  actions.append(prev,next,nextChapter);area.append(actions);
 }
+
+/* Additional collections: chapter data with full Arabic and English text */
+const hOtherCatalog={
+ ahmad:{path:'the_9_books/ahmed',chapters:['1','2','3','4','5','6','7','31'],note:'The source dataset does not include chapters 8–30. This edition is incomplete.'},
+ darimi:{path:'the_9_books/darimi',chapters:['introduction',...Array.from({length:23},(_,i)=>String(i+1))]},
+ riyadussalihin:{path:'other_books/riyad_assalihin',chapters:['introduction',...Array.from({length:19},(_,i)=>String(i+1))]},
+ adab:{path:'other_books/aladab_almufrad',chapters:Array.from({length:57},(_,i)=>String(i+1))},
+ bulugh:{path:'other_books/bulugh_almaram',chapters:Array.from({length:16},(_,i)=>String(i+1))},
+ mishkat:{path:'other_books/mishkat_almasabih',chapters:['introduction',...Array.from({length:24},(_,i)=>String(i+1))]},
+ shamail:{path:'other_books/shamail_muhammadiyah',chapters:[...Array.from({length:56},(_,i)=>String(i+1)).slice(0,8),'8b',...Array.from({length:56},(_,i)=>String(i+1)).slice(8)]}
+};
+let hOtherEntries=[],hOtherIndex=0,hOtherChapter='',hOtherTitle='';
+function hOtherOverview(book){
+ const config=hOtherCatalog[book[2]],area=$('hadithReaderBody');area.replaceChildren();
+ area.append(hMake('h2','',book[0]));const ar=hMake('p','h-arabic',book[1]);ar.lang='ar';ar.dir='rtl';area.append(ar);
+ if(book[2]==='shamail')area.append(hMake('p','h-explain','The Shama’il of Imam at-Tirmidhi explores the Prophet Muhammad’s ﷺ appearance, clothing, habits, worship, conduct and character. Read each narrated report with its attribution. This is a collection of narrations, not a complete biography.'));
+ area.append(hMake('p','','Select a chapter to read its Arabic narrations and English translations here on UmmahLight. The source files are loaded online as you read; no external page opens.'));
+ area.append(hMake('p','h-source','Text: AhmedBaset/hadith-json (Sunnah.com-derived edition). Translation attribution, reuse permissions, chapter completeness and scholarly review must be checked before public launch.'));
+ if(config.note)area.append(hMake('p','h-explain',config.note));
+ const grid=hMake('div','h-chapters');
+ config.chapters.forEach(ch=>{const btn=hMake('button','btn',ch==='introduction'?'Introduction':'Chapter '+ch);btn.type='button';btn.addEventListener('click',()=>hOtherLoad(book,ch));grid.append(btn)});
+ area.append(grid);
+}
+async function hOtherLoad(book,ch){
+ hOtherChapter=ch;const area=$('hadithReaderBody');area.replaceChildren();
+ area.append(hMake('h2','',book[0]+' · '+(ch==='introduction'?'Introduction':'Chapter '+ch)),hMake('p','h-source','Loading complete Arabic and English narration texts…'));
+ const path=hOtherCatalog[book[2]].path+'/'+ch+'.json';
+ const urls=['https://cdn.jsdelivr.net/gh/AhmedBaset/hadith-json@main/db/by_chapter/'+path,'https://raw.githubusercontent.com/AhmedBaset/hadith-json/main/db/by_chapter/'+path];
+ try{
+  let data=null,lastError;
+  for(const url of urls){try{const response=await fetch(url);if(!response.ok)throw Error('HTTP '+response.status);data=await response.json();break}catch(err){lastError=err}}
+  if(!data)throw lastError||Error('Chapter unavailable');
+  hOtherEntries=(data.hadiths||[]).map(h=>({number:h.idInBook||h.id,arabic:h.arabic||'',english:typeof h.english==='string'?h.english:([h.english?.narrator,h.english?.text].filter(Boolean).join(' ')),grades:h.grades||[],reference:h.id}));
+  if(!hOtherEntries.length)throw Error('No narrations available in this chapter');
+  hOtherTitle=data.metadata?.english?.introduction||'';
+  hOtherIndex=0;hOtherRender(book);
+ }catch(err){area.replaceChildren();const back=hMake('button','btn','← Chapters');back.type='button';back.addEventListener('click',()=>hOtherOverview(book));area.append(back,hMake('h2','',book[0]+' · Chapter '+ch),hMake('p','h-explain','The source chapter could not be loaded. Please try again while connected to the internet.'),hMake('p','h-source',String(err.message)))}
+}
+function hOtherRender(book){
+ const h=hOtherEntries[hOtherIndex],area=$('hadithReaderBody');area.replaceChildren();
+ const back=hMake('button','btn','← All chapters');back.type='button';back.addEventListener('click',()=>hOtherOverview(book));area.append(back);
+ area.append(hMake('h2','',book[0]+' · '+(hOtherTitle||'Chapter '+hOtherChapter)),hMake('p','h-source','Narration '+h.number+' · '+(hOtherIndex+1)+' of '+hOtherEntries.length+' in this chapter'));
+ const ar=hMake('p','h-arabic',h.arabic||'Arabic text not available');ar.lang='ar';ar.dir='rtl';area.append(ar,hMake('h3','','English translation'),hMake('p','',h.english||'English text unavailable'),hMake('p','h-source','Source reference: '+book[0]+' · '+h.number));
+ area.append(hMake('p','h-explain','Scholarly commentary and grading: Not supplied or independently verified for this entry. Study the narration with reliable scholars and its wider context.'));
+ const actions=hMake('div','h-actions');
+ const prev=hMake('button','btn','← Previous');prev.type='button';prev.disabled=hOtherIndex===0;prev.addEventListener('click',()=>{hOtherIndex--;hOtherRender(book)});
+ const next=hMake('button','btn dark','Next →');next.type='button';next.disabled=hOtherIndex===hOtherEntries.length-1;next.addEventListener('click',()=>{hOtherIndex++;hOtherRender(book)});
+ const config=hOtherCatalog[book[2]],pos=config.chapters.indexOf(hOtherChapter);
+ const chapterNext=hMake('button','btn','Next chapter →');chapterNext.type='button';chapterNext.disabled=pos>=config.chapters.length-1;chapterNext.addEventListener('click',()=>hOtherLoad(book,config.chapters[pos+1]));
+ actions.append(prev,next,chapterNext);area.append(actions);$('hadithReader').scrollIntoView({block:'start',behavior:'smooth'});
+}
 let hReadingIndex=0;
 function hMake(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined)el.textContent=value;return el}
 function hShowNarration(book,index){const matches=hLocal.filter(x=>x.collections.includes(book[2]));if(!matches.length)return;hReadingIndex=(index+matches.length)%matches.length;const h=matches[hReadingIndex];const area=$('hadithReaderBody');area.replaceChildren();const back=hMake('button','btn','← Book overview');back.type='button';back.addEventListener('click',()=>hOpenBook(hActiveBook));area.append(back,hMake('p','h-source',book[0]+' · Excerpt '+(hReadingIndex+1)+' of '+matches.length),hMake('h2','',h.title));const arabic=hMake('p','h-arabic',h.arabic);arabic.lang='ar';arabic.dir='rtl';area.append(arabic,hMake('h3','','English meaning'),hMake('p','',h.meaning),hMake('p','h-source',h.ref),hMake('p','h-explain',h.note));const actions=hMake('div','h-actions');for(const [label,next] of [['← Previous',hReadingIndex-1],['Next →',hReadingIndex+1]]){const button=hMake('button','btn',label);button.type='button';button.addEventListener('click',()=>hShowNarration(book,next));actions.append(button)}area.append(actions);$('hadithReader').scrollIntoView({block:'start',behavior:'smooth'})}
-function hOpenBook(i){hActiveBook=i;if(hChapterBooks.has(hBooks[i][2])){$('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;hChapterOverview(hBooks[i]);return;}if(hBooks[i][2]==='nawawi40'||hBooks[i][2]==='qudsi40'){hCompleteBookSlug=hBooks[i][2];hNawawiData=null;$('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;hLoadNawawi();return;}const b=hBooks[i];const area=$('hadithReaderBody');area.replaceChildren();area.append(hMake('h2','',b[0]));const arabic=hMake('p','h-arabic',b[1]);arabic.lang='ar';arabic.dir='rtl';area.append(arabic,hMake('p','',b[3]));const matches=hLocal.filter(x=>x.collections.includes(b[2]));const status=hMake('p','h-explain',matches.length?'Currently available inside UmmahLight: '+matches.length+' carefully labelled short Hadith excerpts. Select an entry below to read Arabic, English meaning, reference and study note. The complete book has not yet been imported.':'This book is listed in our catalogue, but its complete Arabic and translated text has not yet been imported and verified. We will publish readable chapters here as reliable, reusable editions become available.');area.append(status);
+function hOpenBook(i){hActiveBook=i;if(hOtherCatalog[hBooks[i][2]]){$('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;hOtherOverview(hBooks[i]);return;}if(hChapterBooks.has(hBooks[i][2])){$('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;hChapterOverview(hBooks[i]);return;}if(hBooks[i][2]==='nawawi40'||hBooks[i][2]==='qudsi40'){hCompleteBookSlug=hBooks[i][2];hNawawiData=null;$('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;hLoadNawawi();return;}const b=hBooks[i];const area=$('hadithReaderBody');area.replaceChildren();area.append(hMake('h2','',b[0]));const arabic=hMake('p','h-arabic',b[1]);arabic.lang='ar';arabic.dir='rtl';area.append(arabic,hMake('p','',b[3]));const matches=hLocal.filter(x=>x.collections.includes(b[2]));const status=hMake('p','h-explain',matches.length?'Currently available inside UmmahLight: '+matches.length+' carefully labelled short Hadith excerpts. Select an entry below to read Arabic, English meaning, reference and study note. The complete book has not yet been imported.':'This book is listed in our catalogue, but its complete Arabic and translated text has not yet been imported and verified. We will publish readable chapters here as reliable, reusable editions become available.');area.append(status);
 if(matches.length){const index=hMake('div','h-chapters');matches.forEach((h,j)=>{const button=hMake('button','btn',String(j+1)+'. '+h.title);button.type='button';button.addEventListener('click',()=>hShowNarration(b,j));index.append(button)});area.append(index)}
 if(b[2]==='nawawi40')area.append(hMake('p','h-source','Imam an-Nawawi’s collection commonly has 42 numbered narrations. This page currently offers selected excerpts only; it does not present all 42 as complete.'));
 $('hadithReader').hidden=false;$('hadithBooks').hidden=true;$('hadithCards').parentElement.querySelector('.h-subheading').hidden=true;$('hadithCards').hidden=true;$('hadithReader').scrollIntoView({block:'start',behavior:'smooth'})}
