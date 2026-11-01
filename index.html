@@ -328,27 +328,40 @@ prayers.push(...quranSelections);
 prayers.push({c:'Qunut & Khatm al-Qur’an',t:'Du’a al-Qunut — Allahumma ihdini',a:'اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، إِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ',m:'O Allah, guide me among those You have guided, grant me well-being among those You have granted well-being, take me into Your care among those You have taken into Your care, bless what You have given me, and protect me from the evil of what You have decreed. You decree and none decrees over You. Whoever You befriend is not humiliated. Blessed and Exalted are You, our Lord.',r:'Sunan Abi Dawud 1425; Jamiʿ at-Tirmidhi 464'});
 prayers.push({c:'Qunut & Khatm al-Qur’an',t:'Du’a after completing the Qur’an — sample supplication',a:'اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا، وَنُورَ صُدُورِنَا، وَجِلَاءَ أَحْزَانِنَا، وَذَهَابَ هُمُومِنَا، اللَّهُمَّ انْفَعْنَا بِمَا عَلَّمْتَنَا، وَعَلِّمْنَا مَا يَنْفَعُنَا، وَزِدْنَا عِلْمًا',m:'O Allah, make the Qur’an the spring of our hearts, the light of our chests, the removal of our sorrows and the relief of our worries. Benefit us through what You have taught us, teach us what benefits us, and increase us in knowledge.',r:'A general supplication assembled from familiar invocations; not a fixed authenticated Khatm al-Qur’an text or a transcript of Shaykh as-Sudais.',n:'There is no single obligatory wording for a du’a after completing the Qur’an. This is not labelled as the Sudais recording.'});
 let dhAudio=null,dhRun=0;
+
+function dhAudioUrl(ref){const parts=ref.split(':');return 'https://everyayah.com/data/Alafasy_128kbps/'+parts[0].padStart(3,'0')+parts[1].padStart(3,'0')+'.mp3'}
 async function dhOpenQuran(p,reader,node){
- const token=++dhRun;reader.replaceChildren();reader.append(node('h2',p.t),node('p','Loading verified Qur’anic Arabic and English verse text…','dh-source'));
- try{
- const entries=await Promise.all(p.verses.map(async ref=>{
- const [a,e]=await Promise.all([fetch('https://api.alquran.cloud/v1/ayah/'+ref+'/ar.alafasy'),fetch('https://api.alquran.cloud/v1/ayah/'+ref+'/en.sahih')]);
- if(!a.ok||!e.ok)throw Error('Qur’an text service unavailable');
- const ar=(await a.json()).data,en=(await e.json()).data;
- if(!ar?.text||!en?.text)throw Error('Missing verse data');
- return {ref,arabic:ar.text,english:en.text,audio:ar.audio||'https://everyayah.com/data/Alafasy_128kbps/'+ref.split(':').map((v,i)=>v.padStart(3,'0')).join('')+'.mp3'};
+ const token=++dhRun;reader.replaceChildren();reader.append(node('h2',p.t),node('p','Loading Arabic verses and English meaning…','dh-source'));
+ const entries=p.verses.map(ref=>({ref,audio:dhAudioUrl(ref)}));
+ if(token!==dhRun)return;
+ reader.replaceChildren();reader.append(node('h2',p.t),node('p','Source: '+p.r,'dh-source'));
+ const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.style.width='100%';audio.src=entries[0].audio;reader.append(audio);dhAudio=audio;
+ const status=node('p','Press the audio player’s Play button or Play all. Audio is a recording by Mishary Rashid al-Afasy, streamed from EveryAyah.','dh-source');reader.append(status);
+ const controls=node('div','','dh-actions');
+ const play=node('button','▶ Play / Restart','btn gold'),pause=node('button','⏸ Pause','btn'),stop=node('button','■ Stop','btn');
+ const repeatLabel=node('label','Repeat entire selection: ','dh-source'),repeat=document.createElement('select');
+ [['1','Once'],['3','3 times'],['7','7 times'],['10','10 times'],['0','Continuously']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;repeat.append(o)});
+ repeat.value='1';repeatLabel.append(repeat);
+ let idx=0,cycles=0,active=false;
+ const counter=node('p','Completed repetitions: 0','dh-counter');reader.append(counter);
+ const setVerse=(n)=>{idx=n;audio.src=entries[idx].audio;status.textContent='Verse '+entries[idx].ref+' · '+(idx+1)+' of '+entries.length+' · cycle '+(cycles+1)};
+ const playNow=()=>{const result=audio.play();if(result?.catch)result.catch(()=>{status.textContent='Playback blocked or unavailable. Tap the audio player Play control. If the recording does not load, try opening the published website rather than the development preview.'})};
+ audio.onended=()=>{if(!active)return;if(idx+1<entries.length){setVerse(idx+1);playNow();return}cycles++;counter.textContent='Completed repetitions: '+cycles;if(repeat.value==='0'||cycles<Number(repeat.value)){setVerse(0);playNow()}else{active=false;status.textContent='Completed '+cycles+' repetition(s).'}};
+ audio.onerror=()=>{status.textContent='Recording could not load. Check internet access; audio source: EveryAyah (Alafasy_128kbps).'};
+ play.type=pause.type=stop.type='button';
+ play.onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();cycles=0;counter.textContent='Completed repetitions: 0';active=true;setVerse(0);playNow()};
+ pause.onclick=()=>{audio.pause();status.textContent='Paused. Tap the audio player Play button to resume.'};
+ stop.onclick=()=>{active=false;audio.pause();audio.currentTime=0;status.textContent='Stopped.'};
+ audio.onplay=()=>{active=true};controls.append(play,pause,stop,repeatLabel);reader.append(controls);
+ const manual=node('button','Count repetition manually +1','btn dark');manual.type='button';manual.onclick=()=>{cycles++;counter.textContent='Completed repetitions: '+cycles};reader.append(manual);
+ const verseArea=node('div','','dh-verses');reader.append(verseArea);
+ const results=await Promise.allSettled(entries.map(async entry=>{
+ const [ar,en]=await Promise.all([fetch('https://api.alquran.cloud/v1/ayah/'+entry.ref+'/quran-uthmani'),fetch('https://api.alquran.cloud/v1/ayah/'+entry.ref+'/en.sahih')]);
+ if(!ar.ok||!en.ok)throw Error('Text service unavailable');
+ const [a,e]=await Promise.all([ar.json(),en.json()]);return {arabic:a.data?.text,english:e.data?.text};
  }));
- if(token!==dhRun)return;reader.replaceChildren();reader.append(node('h2',p.t),node('p','Source: '+p.r,'dh-source'));
- entries.forEach(v=>{const ar=node('p',v.arabic,'dh-ar');ar.lang='ar';ar.dir='rtl';reader.append(node('h3','Verse '+v.ref),ar,node('p',v.english,'dh-meaning'))});
- reader.append(node('p','Audio recitation: Mishary Rashid al-Afasy via the Qur’an audio service. Audio streams online; an internet connection is required.','dh-source'));
- const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.style.width='100%';reader.append(audio);
- const status=node('p','Tap Play to listen to the entire selection in order.','dh-source');reader.append(status);
- const actions=node('div','','dh-actions');const play=node('button','▶ Play all verses','btn gold'),stop=node('button','■ Stop','btn');play.type=stop.type='button';let idx=0,session=0;
- const advance=()=>{if(idx>=entries.length){status.textContent='Recitation complete.';return}audio.src=entries[idx].audio;status.textContent='Playing verse '+entries[idx].ref+' ('+(idx+1)+' of '+entries.length+')';audio.play().catch(()=>{status.textContent='Audio playback was blocked or unavailable. Press the audio player Play button.'})};
- audio.onended=()=>{idx++;advance()};audio.onerror=()=>{status.textContent='Audio unavailable for this verse. Check your internet connection or try again.'};
- play.onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();idx=0;advance()};stop.onclick=()=>{audio.pause();audio.currentTime=0;status.textContent='Stopped.'};
- actions.append(play,stop);reader.append(actions);dhAudio=audio;
- }catch(err){if(token!==dhRun)return;reader.replaceChildren();reader.append(node('h2',p.t),node('p','The Qur’an text or audio service is temporarily unavailable. Please check your internet connection and try again.','dh-source'),node('p',String(err.message),'dh-source'))}
+ if(token!==dhRun)return;
+ results.forEach((res,i)=>{const v=entries[i];verseArea.append(node('h3','Verse '+v.ref));if(res.status==='fulfilled'&&res.value.arabic){const ar=node('p',res.value.arabic,'dh-ar');ar.lang='ar';ar.dir='rtl';verseArea.append(ar,node('p',res.value.english||'English translation unavailable','dh-meaning'))}else{verseArea.append(node('p','Text is temporarily unavailable. The audio player above can still play this verse.','dh-source'))}});
 }
 const cat=document.getElementById('dhikrCategory'),search=document.getElementById('dhikrSearch'),list=document.getElementById('dhikrList'),reader=document.getElementById('dhikrReader');
 if(!cat||!list||!reader)return;
