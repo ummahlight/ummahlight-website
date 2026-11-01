@@ -314,13 +314,49 @@ const prayers=[
 {c:'Protection',t:'Al-Falaq — seeking refuge',a:'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ',m:'Say: I seek refuge in the Lord of daybreak, from the evil of what He created, from the evil of darkness when it settles, from the evil of those who blow on knots, and from the evil of an envier when he envies.',r:'Qur’an 113:1–5; recited for protection in Sahih al-Bukhari 5017'},
 {c:'Protection',t:'An-Nas — seeking refuge',a:'قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ',m:'Say: I seek refuge in the Lord of mankind, the Sovereign of mankind, the God of mankind, from the evil of the retreating whisperer, who whispers into the hearts of mankind, from among jinn and mankind.',r:'Qur’an 114:1–6; recited for protection in Sahih al-Bukhari 5017'}
 ];
+
+const quranSelections=[
+{c:'Ayat al-Kursi & Ruqyah',t:'Ayat al-Kursi — Qur’an 2:255',verses:['2:255'],r:'Qur’an 2:255; Sahih al-Bukhari 2311 (night-time protection report)'},
+{c:'Ayat al-Kursi & Ruqyah',t:'Al-Fatihah — complete Surah',verses:['1:1','1:2','1:3','1:4','1:5','1:6','1:7'],r:'Qur’an 1:1–7; Sahih al-Bukhari 5736 (ruqyah report)'},
+{c:'Ayat al-Kursi & Ruqyah',t:'Al-Ikhlas — complete Surah',verses:['112:1','112:2','112:3','112:4'],r:'Qur’an 112:1–4'},
+{c:'Ayat al-Kursi & Ruqyah',t:'Al-Falaq — complete Surah',verses:['113:1','113:2','113:3','113:4','113:5'],r:'Qur’an 113:1–5'},
+{c:'Ayat al-Kursi & Ruqyah',t:'An-Nas — complete Surah',verses:['114:1','114:2','114:3','114:4','114:5','114:6'],r:'Qur’an 114:1–6'},
+{c:'Ayat al-Kursi & Ruqyah',t:'Last two verses of al-Baqarah',verses:['2:285','2:286'],r:'Qur’an 2:285–286; Sahih al-Bukhari 5009'},
+{c:'Ayat al-Kursi & Ruqyah',t:'Ruqyah listening sequence — Quranic passages',verses:['1:1','1:2','1:3','1:4','1:5','1:6','1:7','2:255','2:285','2:286','112:1','112:2','112:3','112:4','113:1','113:2','113:3','113:4','113:5','114:1','114:2','114:3','114:4','114:5','114:6'],r:'Selected Qur’anic passages commonly recited in ruqyah; this is a reading sequence, not a single prescribed Prophetic formula.'}
+];
+prayers.push(...quranSelections);
+prayers.push({c:'Qunut & Khatm al-Qur’an',t:'Du’a al-Qunut — Allahumma ihdini',a:'اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، إِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ',m:'O Allah, guide me among those You have guided, grant me well-being among those You have granted well-being, take me into Your care among those You have taken into Your care, bless what You have given me, and protect me from the evil of what You have decreed. You decree and none decrees over You. Whoever You befriend is not humiliated. Blessed and Exalted are You, our Lord.',r:'Sunan Abi Dawud 1425; Jamiʿ at-Tirmidhi 464'});
+prayers.push({c:'Qunut & Khatm al-Qur’an',t:'Du’a after completing the Qur’an — sample supplication',a:'اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا، وَنُورَ صُدُورِنَا، وَجِلَاءَ أَحْزَانِنَا، وَذَهَابَ هُمُومِنَا، اللَّهُمَّ انْفَعْنَا بِمَا عَلَّمْتَنَا، وَعَلِّمْنَا مَا يَنْفَعُنَا، وَزِدْنَا عِلْمًا',m:'O Allah, make the Qur’an the spring of our hearts, the light of our chests, the removal of our sorrows and the relief of our worries. Benefit us through what You have taught us, teach us what benefits us, and increase us in knowledge.',r:'A general supplication assembled from familiar invocations; not a fixed authenticated Khatm al-Qur’an text or a transcript of Shaykh as-Sudais.',n:'There is no single obligatory wording for a du’a after completing the Qur’an. This is not labelled as the Sudais recording.'});
+let dhAudio=null,dhRun=0;
+async function dhOpenQuran(p,reader,node){
+ const token=++dhRun;reader.replaceChildren();reader.append(node('h2',p.t),node('p','Loading verified Qur’anic Arabic and English verse text…','dh-source'));
+ try{
+ const entries=await Promise.all(p.verses.map(async ref=>{
+ const [a,e]=await Promise.all([fetch('https://api.alquran.cloud/v1/ayah/'+ref+'/ar.alafasy'),fetch('https://api.alquran.cloud/v1/ayah/'+ref+'/en.sahih')]);
+ if(!a.ok||!e.ok)throw Error('Qur’an text service unavailable');
+ const ar=(await a.json()).data,en=(await e.json()).data;
+ if(!ar?.text||!en?.text)throw Error('Missing verse data');
+ return {ref,arabic:ar.text,english:en.text,audio:ar.audio||'https://everyayah.com/data/Alafasy_128kbps/'+ref.split(':').map((v,i)=>v.padStart(3,'0')).join('')+'.mp3'};
+ }));
+ if(token!==dhRun)return;reader.replaceChildren();reader.append(node('h2',p.t),node('p','Source: '+p.r,'dh-source'));
+ entries.forEach(v=>{const ar=node('p',v.arabic,'dh-ar');ar.lang='ar';ar.dir='rtl';reader.append(node('h3','Verse '+v.ref),ar,node('p',v.english,'dh-meaning'))});
+ reader.append(node('p','Audio recitation: Mishary Rashid al-Afasy via the Qur’an audio service. Audio streams online; an internet connection is required.','dh-source'));
+ const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.style.width='100%';reader.append(audio);
+ const status=node('p','Tap Play to listen to the entire selection in order.','dh-source');reader.append(status);
+ const actions=node('div','','dh-actions');const play=node('button','▶ Play all verses','btn gold'),stop=node('button','■ Stop','btn');play.type=stop.type='button';let idx=0,session=0;
+ const advance=()=>{if(idx>=entries.length){status.textContent='Recitation complete.';return}audio.src=entries[idx].audio;status.textContent='Playing verse '+entries[idx].ref+' ('+(idx+1)+' of '+entries.length+')';audio.play().catch(()=>{status.textContent='Audio playback was blocked or unavailable. Press the audio player Play button.'})};
+ audio.onended=()=>{idx++;advance()};audio.onerror=()=>{status.textContent='Audio unavailable for this verse. Check your internet connection or try again.'};
+ play.onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();idx=0;advance()};stop.onclick=()=>{audio.pause();audio.currentTime=0;status.textContent='Stopped.'};
+ actions.append(play,stop);reader.append(actions);dhAudio=audio;
+ }catch(err){if(token!==dhRun)return;reader.replaceChildren();reader.append(node('h2',p.t),node('p','The Qur’an text or audio service is temporarily unavailable. Please check your internet connection and try again.','dh-source'),node('p',String(err.message),'dh-source'))}
+}
 const cat=document.getElementById('dhikrCategory'),search=document.getElementById('dhikrSearch'),list=document.getElementById('dhikrList'),reader=document.getElementById('dhikrReader');
 if(!cat||!list||!reader)return;
 const categories=['All collections',...new Set(prayers.map(x=>x.c))];categories.forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;cat.append(o)});
 function node(tag,text,cls){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=text;return e}
 let current=0,repeatCount=0;
 function open(i){
- current=i;repeatCount=0;const p=prayers[i];reader.replaceChildren();
+ current=i;repeatCount=0;dhRun++;if(dhAudio){dhAudio.pause();dhAudio.removeAttribute('src');dhAudio.load();dhAudio=null}const p=prayers[i];if(p.verses){dhOpenQuran(p,reader,node);return;}reader.replaceChildren();
  reader.append(node('h2',p.t),node('p',p.c,'dh-source'));
  const ar=node('p',p.a,'dh-ar');ar.lang='ar';ar.dir='rtl';reader.append(ar);
  reader.append(node('h3','English meaning'),node('p',p.m,'dh-meaning'),node('p','Source: '+p.r,'dh-source'));
