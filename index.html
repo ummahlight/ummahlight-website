@@ -340,10 +340,10 @@ async function dhOpenQuran(p,reader,node){
  const controls=node('div','','dh-actions');
  const play=node('button','▶ Play / Restart','btn gold'),pause=node('button','⏸ Pause','btn'),stop=node('button','■ Stop','btn');
  const repeatLabel=node('label','Repeat entire selection: ','dh-source'),repeat=document.createElement('select');
- [['1','Once'],['3','3 times'],['7','7 times'],['10','10 times'],['0','Continuously']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;repeat.append(o)});
- repeat.value='1';repeatLabel.append(repeat);
+ [['1','Once'],['3','3 times'],['7','7 times'],['10','10 times'],['20','20 times'],['50','50 times'],['100','100 times'],['0','Continuously / overnight']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;repeat.append(o)});
+ repeat.value='0';repeatLabel.append(repeat);
  let idx=0,cycles=0,active=false;
- const counter=node('p','Completed repetitions: 0','dh-counter');reader.append(counter);
+ const counter=node('p','Completed repetitions: 0','dh-counter');reader.append(counter);reader.append(node('p','Continuous mode is selected by default. For overnight listening, keep this browser tab open and your device powered. Some phones suspend audio when the screen locks; test your device first.','dh-source'));
  const setVerse=(n)=>{idx=n;audio.src=entries[idx].audio;status.textContent='Verse '+entries[idx].ref+' · '+(idx+1)+' of '+entries.length+' · cycle '+(cycles+1)};
  const playNow=()=>{const result=audio.play();if(result?.catch)result.catch(()=>{status.textContent='Playback blocked or unavailable. Tap the audio player Play control. If the recording does not load, try opening the published website rather than the development preview.'})};
  audio.onended=()=>{if(!active)return;if(idx+1<entries.length){setVerse(idx+1);playNow();return}cycles++;counter.textContent='Completed repetitions: '+cycles;if(repeat.value==='0'||cycles<Number(repeat.value)){setVerse(0);playNow()}else{active=false;status.textContent='Completed '+cycles+' repetition(s).'}};
@@ -352,7 +352,7 @@ async function dhOpenQuran(p,reader,node){
  play.onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();cycles=0;counter.textContent='Completed repetitions: 0';active=true;setVerse(0);playNow()};
  pause.onclick=()=>{audio.pause();status.textContent='Paused. Tap the audio player Play button to resume.'};
  stop.onclick=()=>{active=false;audio.pause();audio.currentTime=0;status.textContent='Stopped.'};
- audio.onplay=()=>{active=true};controls.append(play,pause,stop,repeatLabel);reader.append(controls);
+ audio.onplay=()=>{active=true};repeat.onchange=()=>{status.textContent=repeat.value==='0'?'Continuous playback selected. Press Play / Restart to begin.':'Playback set to '+repeat.value+' complete repetition(s). Press Play / Restart to begin.'};controls.append(play,pause,stop,repeatLabel);reader.append(controls);
  const manual=node('button','Count repetition manually +1','btn dark');manual.type='button';manual.onclick=()=>{cycles++;counter.textContent='Completed repetitions: '+cycles};reader.append(manual);
  const verseArea=node('div','','dh-verses');reader.append(verseArea);
  const results=await Promise.allSettled(entries.map(async entry=>{
