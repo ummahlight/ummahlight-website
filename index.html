@@ -69,6 +69,22 @@
 #quran .playing-ayah{background:#e4f2e8;border-radius:12px;outline:3px solid #a18a43;outline-offset:2px}
 #quran button:focus-visible,#hadith button:focus-visible,#quran select:focus-visible{outline:3px solid #f4c95e;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#quran *,#hadith *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Hadith reader contrast repair: dark-green surfaces with readable white text. */
+#hadith .h-reader{background:#103c35!important;color:#f8faf7!important;border-color:#6eaa91}
+#hadith .h-reader h2,#hadith .h-reader h3,#hadith .h-reader h4,
+#hadith .h-reader p,#hadith .h-reader strong,#hadith .h-reader .h-source,
+#hadith .h-reader .h-arabic{color:#f8faf7!important}
+#hadith .h-reader .h-arabic{font-weight:700;line-height:2.15}
+#hadith .h-reader .h-explain{background:#174d42!important;color:#fff!important;border-left-color:#e7c873}
+#hadith .h-reader .h-explain *{color:#fff!important}
+#hadith .h-reader .h-chapters a{background:#20594b;color:#fff;border:1px solid #90b9a3;font-weight:750}
+#hadith .h-reader .h-chapters a:hover,#hadith .h-reader .h-chapters a:focus-visible{background:#2c725d;color:#fff}
+#hadith .h-reader .h-actions button,#hadith .h-reader .h-actions a.btn{font-weight:750}
+#hadith .h-reader .h-actions .btn:not(:disabled){background:#e7d5a8;color:#152c28;border:2px solid #e7d5a8}
+#hadith .h-reader .h-actions .btn:disabled{opacity:.65;color:#fff;background:#35554e}
+#hadith .h-reader input,#hadith .h-reader select{background:#f9f9f1;color:#142d27;border:2px solid #b6d4c4}
+#hadith .h-reader button:focus-visible,#hadith .h-reader a:focus-visible{outline:3px solid #f5d66d;outline-offset:3px}
 </style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><style>
 .ummah-world-times{background:#073f37;color:#fff;padding:8px 0;overflow:hidden}.ummah-world-times .world-times-label{font-size:12px;font-weight:800;color:#e7d39b;white-space:nowrap}.world-times-row{display:flex;align-items:center;gap:15px}.world-times-viewport{overflow:hidden;flex:1;min-width:0}.world-times-track{display:flex;width:max-content;gap:35px;animation:worldClockTicker 55s linear infinite}.world-times-track span{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}.ummah-world-times:hover .world-times-track,.ummah-world-times:focus-within .world-times-track{animation-play-state:paused}@keyframes worldClockTicker{to{transform:translateX(-50%)}}@media(prefers-reduced-motion:reduce){.world-times-track{animation:none}.world-times-viewport{overflow-x:auto}}.ummah-support-link{position:fixed;right:14px;bottom:18px;z-index:1000;background:#e7c776;color:#063e36;padding:12px 17px;border-radius:40px;box-shadow:0 4px 16px #0004;font-weight:800;text-decoration:none;font-size:14px}.ummah-support-link:focus-visible{outline:3px solid #fff}@media(max-width:600px){.ummah-support-link{bottom:12px;right:10px;padding:10px 13px}}
 </style><style>#quran .quran-reader{background:#fffdf5!important}#quran .ayah{background:#fffdf5!important}#quran .ayah.playing-ayah{background:#e0f3e9!important}#quran .ayah .arabic{font-size:clamp(36px,4vw,52px)!important;line-height:2.25!important;font-weight:700}#quran .ayah .meaning{font-size:clamp(18px,2vw,23px)!important;line-height:1.9!important}#quran .ayah{grid-template-columns:1fr!important}#quran .ayah .arabic,#quran .ayah .meaning{grid-column:1/-1!important;grid-row:auto!important}#quran .audio-player{position:sticky;top:80px}#resumeQuran[hidden]{display:none}.ummah-tools{background:#073d36;color:#fff;padding:12px 18px;text-align:center}.ummah-tools strong{color:#f3cf78}.ummah-tools a{color:#f9d88e;text-decoration:underline}.ummah-tools button{margin:5px;border-radius:8px;padding:7px 12px;background:#fff8e8;color:#063e36;border:0}.ummah-tools small{display:block;color:#d5e5df}</style></head><body>
