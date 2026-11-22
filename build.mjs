@@ -5,7 +5,7 @@ import path from 'node:path';
 const dist = 'dist';
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
-const publicFiles = ['index.html', 'style.css', 'app.js', 'enhancements.js', 'manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-192.png', 'icon-512.png', 'robots.txt', 'sitemap.xml', '_headers'];
+const publicFiles = ['index.html', 'style.css', 'app.js', 'enhancements.js', 'academy-expansion.js', 'manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-192.png', 'icon-512.png', 'robots.txt', 'sitemap.xml', '_headers'];
 for (const name of publicFiles) {
   if (fs.existsSync(name) && fs.statSync(name).isFile()) {
     fs.copyFileSync(name, path.join(dist, name));
