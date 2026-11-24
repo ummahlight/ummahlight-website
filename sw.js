@@ -1,4 +1,4 @@
-const CACHE='ummahlight-shell-v3';
+const CACHE='ummahlight-shell-v4';
 const SHELL=['./','./index.html','./enhancements.js','./icon.svg','./manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ummahlight-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -10,6 +10,6 @@ self.addEventListener('fetch',e=>{
     return;
   }
   if(/\.(?:css|js|svg|png|webmanifest)$/.test(new URL(r.url).pathname)){
-    e.respondWith(caches.match(r).then(hit=>hit||fetch(r).then(res=>{if(res.ok){const copy=res.clone();e.waitUntil(caches.open(CACHE).then(c=>c.put(r,copy)))}return res})));
+    e.respondWith(fetch(r,{cache:'no-cache'}).then(res=>{if(res.ok){const copy=res.clone();e.waitUntil(caches.open(CACHE).then(c=>c.put(r,copy)))}return res}).catch(()=>caches.match(r)));
   }
 });
